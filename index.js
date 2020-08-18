@@ -230,7 +230,7 @@ module.exports = class ClearMessages extends Plugin {
       let skippedMsgs = 0;
       for (const bulk of msgs) {
          out.push(...bulk.filter(m => m.hit == true && m.type == 0));
-         skippedMsgs += bulk.filter(m => m.hit == true && m.type !== 0).length;
+         skippedMsgs += bulk.filter(msg => !out.find(m=> m.id === msg.id));
       }
       await sleep(this.settings.get('searchDelay'));
       return {
