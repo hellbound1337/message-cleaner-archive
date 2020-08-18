@@ -12,10 +12,12 @@ const { receiveMessage } = messages
 
 if (!Array.prototype.chunk) {
    Object.defineProperty(Array.prototype, 'chunk', {
-      value: function (chunkSize) {
-         var R = []
-         for (var i = 0; i < this.length; i += chunkSize) R.push(this.slice(i, i + chunkSize))
-         return R
+      value: function (size) {
+         var array = []
+         for (var i = 0; i < this.length; i += size) {
+            array.push(this.slice(i, i + size))
+         }
+         return array
       },
    })
 }
