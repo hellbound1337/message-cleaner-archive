@@ -1,11 +1,11 @@
-const { React, getModuleByDisplayName } = require('powercord/webpack');
-const { Card, AsyncComponent } = require('powercord/components');
-const { SliderInput, RadioGroup } = require('powercord/components/settings');
-const FormText = AsyncComponent.from(getModuleByDisplayName('FormText'));
+const { React, getModuleByDisplayName } = require('powercord/webpack')
+const { Card, AsyncComponent } = require('powercord/components')
+const { SliderInput, RadioGroup } = require('powercord/components/settings')
+const FormText = AsyncComponent.from(getModuleByDisplayName('FormText'))
 
 module.exports = class Settings extends React.Component {
    constructor(props) {
-      super();
+      super()
    }
 
    renderBurst() {
@@ -18,37 +18,25 @@ module.exports = class Settings extends React.Component {
                markers={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
                defaultValue={3}
                initialValue={this.props.getSetting('chunkSize', 3)}
-               onValueChange={val => this.props.updateSetting('chunkSize', Math.floor(parseInt(val)))}
-               note='Collection size of burst deletion chunks'
-               onMarkerRender={v => `x${v}`}
+               onValueChange={(val) => this.props.updateSetting('chunkSize', Math.floor(parseInt(val)))}
+               note="Collection size of burst deletion chunks"
+               onMarkerRender={(v) => `x${v}`}
             >
                Chunk Size
-			</SliderInput>
+            </SliderInput>
             <SliderInput
                minValue={500}
                maxValue={1500}
                stickToMarkers
-               markers={[
-                  500,
-                  600,
-                  700,
-                  800,
-                  900,
-                  1000,
-                  1100,
-                  1200,
-                  1300,
-                  1400,
-                  1500
-               ]}
+               markers={[500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500]}
                defaultValue={1000}
                initialValue={this.props.getSetting('burstDelay', 265)}
-               onValueChange={val => this.props.updateSetting('burstDelay', Math.floor(parseInt(val)))}
-               note='Delay between deleting chunks'
-               onMarkerRender={v => `${Math.floor((v / 1000) * 100) / 100}s`}
+               onValueChange={(val) => this.props.updateSetting('burstDelay', Math.floor(parseInt(val)))}
+               note="Delay between deleting chunks"
+               onMarkerRender={(v) => `${Math.floor((v / 1000) * 100) / 100}s`}
             >
                Burst Delay
-			</SliderInput>
+            </SliderInput>
          </div>
       )
    }
@@ -60,27 +48,15 @@ module.exports = class Settings extends React.Component {
                minValue={100}
                maxValue={500}
                stickToMarkers
-               markers={[
-                  100,
-                  110,
-                  120,
-                  130,
-                  140,
-                  150,
-                  160,
-                  170,
-                  180,
-                  190,
-                  200
-               ]}
+               markers={[100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200]}
                defaultValue={150}
                initialValue={this.props.getSetting('normalDelay', 150)}
-               onValueChange={val => this.props.updateSetting('normalDelay', Math.floor(parseInt(val)))}
-               note='Delay between deleting messages'
-               onMarkerRender={v => `${Math.floor(v)}ms`}
+               onValueChange={(val) => this.props.updateSetting('normalDelay', Math.floor(parseInt(val)))}
+               note="Delay between deleting messages"
+               onMarkerRender={(v) => `${Math.floor(v)}ms`}
             >
                Delete Delay
-		  </SliderInput>
+            </SliderInput>
          </div>
       )
    }
@@ -90,13 +66,11 @@ module.exports = class Settings extends React.Component {
          <div>
             <RadioGroup
                value={this.props.getSetting('mode', 1)}
-               onChange={v => this.props.updateSetting('mode', v.value)}
-               options={
-                  [
-                     { name: 'Normal: Deletes one message at a time (most stable but slower)', value: 0 },
-                     { name: 'Burst: Deletes multiple messages at a time (unstable but fast)', value: 1 },
-                  ]
-               }
+               onChange={(v) => this.props.updateSetting('mode', v.value)}
+               options={[
+                  { name: 'Normal: Deletes one message at a time (most stable but slower)', value: 0 },
+                  { name: 'Burst: Deletes multiple messages at a time (unstable but fast)', value: 1 },
+               ]}
             >
                Deletion Mode
             </RadioGroup>
@@ -104,27 +78,15 @@ module.exports = class Settings extends React.Component {
                minValue={500}
                maxValue={1500}
                stickToMarkers
-               markers={[
-                  150,
-                  160,
-                  170,
-                  180,
-                  190,
-                  200,
-                  210,
-                  220,
-                  230,
-                  240,
-                  250,
-               ]}
+               markers={[150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250]}
                defaultValue={200}
                initialValue={this.props.getSetting('searchDelay', 200)}
-               onValueChange={val => this.props.updateSetting('searchDelay', Math.floor(parseInt(val)))}
-               note='Delay between fetching messages'
-               onMarkerRender={v => `${Math.floor((v / 1000) * 100) / 100}s`}
+               onValueChange={(val) => this.props.updateSetting('searchDelay', Math.floor(parseInt(val)))}
+               note="Delay between fetching messages"
+               onMarkerRender={(v) => `${Math.floor((v / 1000) * 100) / 100}s`}
             >
                Search Delay
-			</SliderInput>
+            </SliderInput>
             {this.props.getSetting('mode', 1) ? this.renderBurst() : this.renderNormal()}
          </div>
       )
