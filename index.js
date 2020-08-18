@@ -30,7 +30,6 @@ module.exports = class ClearMessages extends Plugin {
 		if (this.settings.get('burstDelay') == null) this.settings.set('burstDelay', 1000);
 		if (this.settings.get('normalDelay') == null) this.settings.set('normalDelay', 150);
 		if (this.settings.get('searchDelay') == null) this.settings.set('searchDelay', 200);
-
 		if (this.settings.get('aliases') == null) this.settings.set('aliases', ['prune', 'purge', 'cl', 'pr']);
 
 		powercord.api.commands.registerCommand({
