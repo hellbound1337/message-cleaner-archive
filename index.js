@@ -112,7 +112,7 @@ module.exports = class ClearMessages extends Plugin {
          return receiveMessage(receivedMessage.channel_id, receivedMessage);
       }
 
-      receivedMessage.content = `Pruning Started.`;
+      receivedMessage.content = `Started clearing.`;
       receiveMessage(receivedMessage.channel_id, receivedMessage);
 
       let amount = this.settings.get('mode') ? await this.burstDelete(count, before, this.channel) : await this.normalDelete(count, before, this.channel)
@@ -132,7 +132,7 @@ module.exports = class ClearMessages extends Plugin {
             }],
          });
 
-         receivedMessage.content = `Deleted ${amount} messages.`;
+         receivedMessage.content = `Cleared ${amount} messages.`;
       } else {
          receivedMessage.content = `No messages found.`;
       }
@@ -230,7 +230,7 @@ module.exports = class ClearMessages extends Plugin {
       let skippedMsgs = 0;
       for (const bulk of msgs) {
          out.push(...bulk.filter(m => m.hit == true && m.type == 0));
-         skippedMsgs += bulk.filter(msg => !out.find(m=> m.id === msg.id)).length;
+         skippedMsgs += bulk.filter(msg => !out.find(m => m.id === msg.id)).length;
       }
       await sleep(this.settings.get('searchDelay'));
       return {
