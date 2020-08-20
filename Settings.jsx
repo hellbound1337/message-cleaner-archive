@@ -1,13 +1,7 @@
-const { React, getModuleByDisplayName } = require('powercord/webpack')
-const { Card, AsyncComponent } = require('powercord/components')
+const { React } = require('powercord/webpack')
 const { SliderInput, RadioGroup } = require('powercord/components/settings')
-const FormText = AsyncComponent.from(getModuleByDisplayName('FormText'))
 
 module.exports = class Settings extends React.Component {
-   constructor(props) {
-      super()
-   }
-
    renderBurst() {
       return (
          <div>
@@ -19,7 +13,7 @@ module.exports = class Settings extends React.Component {
                defaultValue={3}
                initialValue={this.props.getSetting('chunkSize', 3)}
                onValueChange={(val) => this.props.updateSetting('chunkSize', Math.floor(parseInt(val)))}
-               note="Collection size of burst deletion chunks"
+               note='Collection size of burst deletion chunks'
                onMarkerRender={(v) => `x${v}`}
             >
                Chunk Size
@@ -32,7 +26,7 @@ module.exports = class Settings extends React.Component {
                defaultValue={1000}
                initialValue={this.props.getSetting('burstDelay', 265)}
                onValueChange={(val) => this.props.updateSetting('burstDelay', Math.floor(parseInt(val)))}
-               note="Delay between deleting chunks"
+               note='Delay between deleting chunks'
                onMarkerRender={(v) => `${Math.floor((v / 1000) * 100) / 100}s`}
             >
                Burst Delay
@@ -52,7 +46,7 @@ module.exports = class Settings extends React.Component {
                defaultValue={150}
                initialValue={this.props.getSetting('normalDelay', 150)}
                onValueChange={(val) => this.props.updateSetting('normalDelay', Math.floor(parseInt(val)))}
-               note="Delay between deleting messages"
+               note='Delay between deleting messages'
                onMarkerRender={(v) => `${Math.floor(v)}ms`}
             >
                Delete Delay
@@ -69,7 +63,7 @@ module.exports = class Settings extends React.Component {
                onChange={(v) => this.props.updateSetting('mode', v.value)}
                options={[
                   { name: 'Normal: Deletes one message at a time (most stable but slower)', value: 0 },
-                  { name: 'Burst: Deletes multiple messages at a time (unstable but fast)', value: 1 },
+                  { name: 'Burst: Deletes multiple messages at a time (unstable but fast)', value: 1 }
                ]}
             >
                Deletion Mode
@@ -82,7 +76,7 @@ module.exports = class Settings extends React.Component {
                defaultValue={200}
                initialValue={this.props.getSetting('searchDelay', 200)}
                onValueChange={(val) => this.props.updateSetting('searchDelay', Math.floor(parseInt(val)))}
-               note="Delay between fetching messages"
+               note='Delay between fetching messages'
                onMarkerRender={(v) => `${Math.floor((v / 1000) * 100) / 100}s`}
             >
                Search Delay

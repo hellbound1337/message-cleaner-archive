@@ -18,7 +18,7 @@ if (!Array.prototype.chunk) {
             array.push(this.slice(i, i + size))
          }
          return array
-      },
+      }
    })
 }
 
@@ -38,13 +38,13 @@ module.exports = class ClearMessages extends Plugin {
          aliases: this.settings.get('aliases'),
          description: 'Clears a certain amount of messages.',
          usage: '{c} (amount) [beforeMessageId]',
-         executor: (args) => this.clear(args),
+         executor: (args) => this.clear(args)
       })
 
       powercord.api.settings.registerSettings('clear-messages', {
          category: this.entityID,
          label: 'Message Cleaner',
-         render: Settings,
+         render: Settings
       })
 
       const { getChannelId } = getModule(['getLastSelectedChannelId'], false)
@@ -118,9 +118,9 @@ module.exports = class ClearMessages extends Plugin {
                   text: 'Ok',
                   color: 'green',
                   size: 'small',
-                  look: 'outlined',
-               },
-            ],
+                  look: 'outlined'
+               }
+            ]
          })
 
          receivedMessage.content = `Cleared ${amount} messages.`
@@ -230,7 +230,7 @@ module.exports = class ClearMessages extends Plugin {
          return {
             messages: [],
             offset: offset,
-            skipped: 0,
+            skipped: 0
          }
       let skippedMsgs = 0
       for (let bulk of msgs) {
@@ -242,7 +242,7 @@ module.exports = class ClearMessages extends Plugin {
       return {
          messages: out.sort((a, b) => b.id - a.id),
          offset: skippedMsgs + offset,
-         skipped: skippedMsgs,
+         skipped: skippedMsgs
       }
    }
 
@@ -255,21 +255,21 @@ module.exports = class ClearMessages extends Plugin {
             Tooltip,
             {
                text: 'Clear Messages',
-               position: 'bottom',
+               position: 'bottom'
             },
             React.createElement(
                'div',
                {
-                  className: ['prune-icon', classes.iconWrapper, classes.clickable].join(' '),
+                  className: ['prune-icon', classes.iconWrapper, classes.clickable].join(' ')
                },
                React.createElement(PruneIcon, {
                   className: ['prune-icon', classes.icon].join(' '),
                   onClick: async () =>
                      openModal(() =>
                         React.createElement(Modal, {
-                           scripts: this,
+                           scripts: this
                         })
-                     ),
+                     )
                })
             )
          )
