@@ -1,4 +1,4 @@
-# Clear Messages
+# Clear Messages [![CodeFactor](https://www.codefactor.io/repository/github/hellbound1337/clear-messages/badge)](https://www.codefactor.io/repository/github/hellbound1337/clear-messages)
 
 A powercord plugin to prune messages.
 
