@@ -150,12 +150,12 @@ module.exports = class ClearMessages extends Plugin {
 
    async burstDelete(count, before, channel) {
       let deleted = 0
-      this.offset = 0
+      let offset = 0
       while (count == 'all' || count > deleted) {
          if (count !== 'all' && count === deleted) break
-         let get = await this.fetch(channel, this.getCurrentUser().id, before, this.offset)
-         this.offset = get.offset
+         let get = await this.fetch(channel, this.getCurrentUser().id, before, offset)
          if (get.messages.length <= 0 && get.skipped == 0) break
+         offset += get.offset
          while (count !== 'all' && count < get.messages.length) get.messages.pop()
          let chunk = get.messages.chunk(this.settings.get('chunkSize'))
          for (const msgs of chunk) {
@@ -181,7 +181,7 @@ module.exports = class ClearMessages extends Plugin {
 
    async deleteMsg(id, channel) {
       let deleted = 0
-      await del(`https://discord.com/api/v7/channels/${channel}/messages/${id}`)
+      await del(`https://discord.com/api/v6/channels/${channel}/messages/${id}`)
          .set('Authorization', this.getToken())
          .then(() => {
             deleted++
@@ -206,7 +206,7 @@ module.exports = class ClearMessages extends Plugin {
    async fetch(channel, user, before, offset) {
       let out = []
       let messages = await get(
-         `https://discord.com/api/v7/channels/${channel}/messages/search?author_id=${user}${
+         `https://discord.com/api/v6/channels/${channel}/messages/search?author_id=${user}${
             before ? `&max_id=${before}` : ''
          }${offset > 0 ? `&offset=${offset}` : ''}`
       )
