@@ -182,6 +182,7 @@ module.exports = class ClearMessages extends Plugin {
    async deleteMsg(id, channel) {
       let deleted = 0
       await del(`https://discord.com/api/v6/channels/${channel}/messages/${id}`)
+         .set('User-Agent', navigator.userAgent)
          .set('Authorization', this.getToken())
          .then(() => {
             deleted++
@@ -210,6 +211,7 @@ module.exports = class ClearMessages extends Plugin {
             before ? `&max_id=${before}` : ''
          }${offset > 0 ? `&offset=${offset}` : ''}`
       )
+         .set('User-Agent', navigator.userAgent)
          .set('Authorization', this.getToken())
          .catch(async (err) => {
             switch (err.statusCode) {
