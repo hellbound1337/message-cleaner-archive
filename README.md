@@ -26,7 +26,7 @@ This plugin was made purely for educational purposes. You hold the responsibilit
 # Adding your own aliases
 ### To add your own aliases, you must find your powercord settings folder.
 - Go to [powercord folder location]\settings\clear-messages.json
-- To add an alias add another array item by changing `['1', '2', '3']` to `['1', '2', '3', '4']
+- To add an alias add another array item by changing `['1', '2', '3']` to `['1', '2', '3', '4']`
 ### Order doesn't matter.
 
 # Examples
