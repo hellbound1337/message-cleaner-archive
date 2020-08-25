@@ -1,5 +1,5 @@
-const { React } = require('powercord/webpack')
-const { SliderInput, RadioGroup } = require('powercord/components/settings')
+const { React } = require('powercord/webpack');
+const { SliderInput, RadioGroup } = require('powercord/components/settings');
 
 module.exports = class Settings extends React.Component {
    renderBurst() {
@@ -32,7 +32,7 @@ module.exports = class Settings extends React.Component {
                Burst Delay
             </SliderInput>
          </div>
-      )
+      );
    }
 
    renderNormal() {
@@ -52,7 +52,7 @@ module.exports = class Settings extends React.Component {
                Delete Delay
             </SliderInput>
          </div>
-      )
+      );
    }
 
    render() {
@@ -83,6 +83,6 @@ module.exports = class Settings extends React.Component {
             </SliderInput>
             {this.props.getSetting('mode', 1) ? this.renderBurst() : this.renderNormal()}
          </div>
-      )
+      );
    }
-}
+};
