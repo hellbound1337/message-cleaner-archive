@@ -24,7 +24,7 @@ module.exports = class Settings extends React.Component {
                stickToMarkers
                markers={[500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500]}
                defaultValue={1000}
-               initialValue={this.props.getSetting('burstDelay', 265)}
+               initialValue={this.props.getSetting('burstDelay', 1000)}
                onValueChange={(val) => this.props.updateSetting('burstDelay', Math.floor(parseInt(val)))}
                note='Delay between deleting chunks'
                onMarkerRender={(v) => `${Math.floor((v / 1000) * 100) / 100}s`}

@@ -1,37 +1,32 @@
-const { React, getModule, messages, getModuleByDisplayName } = require('powercord/webpack');
-const sleep = async (ms) => new Promise((done) => setTimeout(done, ms));
-const { inject, uninject } = require('powercord/injector');
-const { open: openModal } = require('powercord/modal');
-const { Tooltip } = require('powercord/components');
-const PruneIcon = require('./components/PruneIcon');
+const { getModule, messages } = require('powercord/webpack');
 const { Plugin } = require('powercord/entities');
 const { get, del } = require('powercord/http');
-const Modal = require('./components/Modal');
-const Settings = require('./Settings');
-const { receiveMessage } = messages;
+const { sleep } = require('powercord/util');
+const Settings = require('./components/Settings');
 
-if (!Array.prototype.chunk) {
-   Object.defineProperty(Array.prototype, 'chunk', {
-      value: function (size) {
-         var array = [];
-         for (var i = 0; i < this.length; i += size) {
-            array.push(this.slice(i, i + size));
-         }
-         return array;
-      }
-   });
-}
+const { getChannelId } = getModule(['getLastSelectedChannelId'], false);
+const { getCurrentUser } = getModule(['getCurrentUser'], false);
+const { getToken } = getModule(['getToken'], false);
 
 module.exports = class ClearMessages extends Plugin {
-   pruning = [];
-
    startPlugin() {
-      if (this.settings.get('mode') == null) this.settings.set('mode', 1);
-      if (this.settings.get('chunkSize') == null) this.settings.set('chunkSize', 3);
-      if (this.settings.get('burstDelay') == null) this.settings.set('burstDelay', 1000);
-      if (this.settings.get('normalDelay') == null) this.settings.set('normalDelay', 150);
-      if (this.settings.get('searchDelay') == null) this.settings.set('searchDelay', 200);
-      if (this.settings.get('aliases') == null) this.settings.set('aliases', ['prune', 'purge', 'cl', 'pr']);
+      this.pruning = {};
+
+      if (!Array.prototype.chunk) {
+         Object.defineProperty(Array.prototype, 'chunk', {
+            value: function (size) {
+               var array = [];
+               for (var i = 0; i < this.length; i += size) {
+                  array.push(this.slice(i, i + size));
+               }
+               return array;
+            }
+         });
+      }
+
+      if (!this.settings.get('aliases')) {
+         this.settings.set('aliases', ['prune', 'purge', 'cl', 'pr']);
+      }
 
       powercord.api.commands.registerCommand({
          command: 'clear',
@@ -46,43 +41,32 @@ module.exports = class ClearMessages extends Plugin {
          label: 'Message Cleaner',
          render: Settings
       });
-
-      const { getChannelId } = getModule(['getLastSelectedChannelId'], false);
-      const { getCurrentUser } = getModule(['getCurrentUser'], false);
-      const { getToken } = getModule(['getToken'], false);
-      this.getChannelId = getChannelId;
-      this.getCurrentUser = getCurrentUser;
-      this.getToken = getToken;
-
-      // this.addIcon();
    }
 
    pluginWillUnload() {
       powercord.api.commands.unregisterCommand('clear');
       powercord.api.settings.unregisterSettings('clear-messages');
-      // uninject('prune-icon');
    }
 
    async clear(args) {
-      const { BOT_AVATARS } = await getModule(['BOT_AVATARS']);
-      const { createBotMessage } = await getModule(['createBotMessage']);
+      const { BOT_AVATARS } = getModule(['BOT_AVATARS'], false);
+      const { createBotMessage } = getModule(['createBotMessage'], false);
 
-      this.channel = this.getChannelId();
+      this.channel = getChannelId();
 
       const receivedMessage = createBotMessage(this.channel, {});
-
       BOT_AVATARS.clear_messages = 'https://i.imgur.com/dOe7F3y.png';
       receivedMessage.author.username = 'Message Cleaner';
       receivedMessage.author.avatar = 'clear_messages';
 
       if (args.length === 0) {
          receivedMessage.content = 'Please specify an amount.';
-         return receiveMessage(receivedMessage.channel_id, receivedMessage);
+         return messages.receiveMessage(receivedMessage.channel_id, receivedMessage);
       }
 
       if (this.pruning[this.channel] == true) {
          receivedMessage.content = `Already pruning in this channel.`;
-         return receiveMessage(receivedMessage.channel_id, receivedMessage);
+         return messages.receiveMessage(receivedMessage.channel_id, receivedMessage);
       }
 
       let count = args.shift();
@@ -96,15 +80,13 @@ module.exports = class ClearMessages extends Plugin {
 
       if (count <= 0 || count == NaN) {
          receivedMessage.content = 'Amount must be specified.';
-         return receiveMessage(receivedMessage.channel_id, receivedMessage);
+         return messages.receiveMessage(receivedMessage.channel_id, receivedMessage);
       }
 
       receivedMessage.content = `Started clearing.`;
-      receiveMessage(receivedMessage.channel_id, receivedMessage);
+      messages.receiveMessage(receivedMessage.channel_id, receivedMessage);
 
-      let amount = this.settings.get('mode')
-         ? await this.burstDelete(count, before, this.channel)
-         : await this.normalDelete(count, before, this.channel);
+      let amount = this.settings.get('mode', 1) ? await this.burstDelete(count, before, this.channel) : await this.normalDelete(count, before, this.channel);
 
       delete this.pruning[this.channel];
 
@@ -128,7 +110,7 @@ module.exports = class ClearMessages extends Plugin {
          receivedMessage.content = `No messages found.`;
       }
 
-      return receiveMessage(receivedMessage.channel_id, receivedMessage);
+      return messages.receiveMessage(receivedMessage.channel_id, receivedMessage);
    }
 
    async normalDelete(count, before, channel) {
@@ -136,12 +118,12 @@ module.exports = class ClearMessages extends Plugin {
       let offset = 0;
       while (count == 'all' || count > deleted) {
          if (count !== 'all' && count === deleted) break;
-         let get = await this.fetch(channel, this.getCurrentUser().id, before, offset);
+         let get = await this.fetch(channel, getCurrentUser().id, before, offset);
          if (get.messages.length <= 0 && get.skipped == 0) break;
          offset += get.offset;
          while (count !== 'all' && count < get.messages.length) get.messages.pop();
          for (const msg of get.messages) {
-            await sleep(this.settings.get('normalDelay'));
+            await sleep(this.settings.get('normalDelay', 150));
             deleted += await this.deleteMsg(msg.id, channel);
          }
       }
@@ -153,11 +135,11 @@ module.exports = class ClearMessages extends Plugin {
       let offset = 0;
       while (count == 'all' || count > deleted) {
          if (count !== 'all' && count === deleted) break;
-         let get = await this.fetch(channel, this.getCurrentUser().id, before, offset);
+         let get = await this.fetch(channel, getCurrentUser().id, before, offset);
          if (get.messages.length <= 0 && get.skipped == 0) break;
          offset += get.offset;
          while (count !== 'all' && count < get.messages.length) get.messages.pop();
-         let chunk = get.messages.chunk(this.settings.get('chunkSize'));
+         let chunk = get.messages.chunk(this.settings.get('chunkSize', 3));
          for (const msgs of chunk) {
             let funcs = [];
             for (const msg of msgs) {
@@ -172,7 +154,7 @@ module.exports = class ClearMessages extends Plugin {
                   });
                })
             );
-            await sleep(this.settings.get('burstDelay'));
+            await sleep(this.settings.get('burstDelay', 1000));
          }
       }
 
@@ -183,7 +165,7 @@ module.exports = class ClearMessages extends Plugin {
       let deleted = 0;
       await del(`https://discord.com/api/v6/channels/${channel}/messages/${id}`)
          .set('User-Agent', navigator.userAgent)
-         .set('Authorization', this.getToken())
+         .set('Authorization', getToken())
          .then(() => {
             deleted++;
          })
@@ -193,6 +175,7 @@ module.exports = class ClearMessages extends Plugin {
                   this.log(`Can't delete ${id} (Already deleted?)`);
                   break;
                case 429:
+                  this.log(`Ratelimited while deleting ${id}. Waiting ${err.body.retry_after}ms`);
                   await sleep(err.body.retry_after);
                   deleted += await this.deleteMsg(id, channel);
                   break;
@@ -207,15 +190,14 @@ module.exports = class ClearMessages extends Plugin {
    async fetch(channel, user, before, offset) {
       let out = [];
       let messages = await get(
-         `https://discord.com/api/v6/channels/${channel}/messages/search?author_id=${user}${
-            before ? `&max_id=${before}` : ''
-         }${offset > 0 ? `&offset=${offset}` : ''}`
+         `https://discord.com/api/v6/channels/${channel}/messages/search?author_id=${user}${before ? `&max_id=${before}` : ''}${offset > 0 ? `&offset=${offset}` : ''}`
       )
          .set('User-Agent', navigator.userAgent)
-         .set('Authorization', this.getToken())
+         .set('Authorization', getToken())
          .catch(async (err) => {
             switch (err.statusCode) {
                case 429:
+                  this.log(`Ratelimited while fetching. Waiting ${err.body.retry_after}ms`);
                   await sleep(err.body.retry_after);
                   return this.fetch(channel, user, before);
                default:
@@ -244,51 +226,13 @@ module.exports = class ClearMessages extends Plugin {
          skippedMsgs += bulk.filter((msg) => !out.find((m) => m.id === msg.id)).length;
       }
 
-      await sleep(this.settings.get('searchDelay'));
+      await sleep(this.settings.get('searchDelay', 200));
 
       return {
          messages: out.sort((a, b) => b.id - a.id),
          offset: skippedMsgs + offset,
          skipped: skippedMsgs
       };
-   }
-
-   async addIcon() {
-      const classes = await getModule(['iconWrapper', 'clickable']);
-      const HeaderBarContainer = await getModuleByDisplayName('HeaderBarContainer');
-
-      inject('prune-icon', HeaderBarContainer.prototype, 'renderLoggedIn', (args, res) => {
-         const Switcher = React.createElement(
-            Tooltip,
-            {
-               text: 'Clear Messages',
-               position: 'bottom'
-            },
-            React.createElement(
-               'div',
-               {
-                  className: ['prune-icon', classes.iconWrapper, classes.clickable].join(' ')
-               },
-               React.createElement(PruneIcon, {
-                  className: ['prune-icon', classes.icon].join(' '),
-                  onClick: async () =>
-                     openModal(() =>
-                        React.createElement(Modal, {
-                           scripts: this
-                        })
-                     )
-               })
-            )
-         );
-
-         if (!res.props.toolbar) {
-            res.props.toolbar = Switcher;
-         } else {
-            res.props.toolbar.props.children.push(Switcher);
-         }
-
-         return res;
-      });
    }
 
    async random(length) {
