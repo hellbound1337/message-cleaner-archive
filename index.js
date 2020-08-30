@@ -59,17 +59,7 @@ module.exports = class ClearMessages extends Plugin {
       receivedMessage.author.username = 'Message Cleaner';
       receivedMessage.author.avatar = 'clear_messages';
 
-      let count = args.shift();
-      let before = args.shift();
-
-      if (count == 'stop' && this.pruning[this.channel]) {
-         delete this.pruning[this.channel];
-      } else if (count == 'stop' && !this.pruning[this.channel]) {
-         receivedMessage.content = "You aren't pruning this channel.";
-         return messages.receiveMessage(receivedMessage.channel_id, receivedMessage);
-      }
-
-      if (!count) {
+      if (args.length === 0) {
          receivedMessage.content = 'Please specify an amount.';
          return messages.receiveMessage(receivedMessage.channel_id, receivedMessage);
       }
@@ -78,6 +68,9 @@ module.exports = class ClearMessages extends Plugin {
          receivedMessage.content = `Already pruning in this channel.`;
          return messages.receiveMessage(receivedMessage.channel_id, receivedMessage);
       }
+
+      let count = args.shift();
+      let before = args.shift();
 
       this.pruning[this.channel] = true;
 
@@ -123,14 +116,13 @@ module.exports = class ClearMessages extends Plugin {
    async normalDelete(count, before, channel) {
       let deleted = 0;
       let offset = 0;
-      while ((count == 'all' || count > deleted) && this.pruning[this.channel]) {
-         if ((count !== 'all' && count === deleted) || !this.pruning[this.channel]) break;
+      while (count == 'all' || count > deleted) {
+         if (count !== 'all' && count === deleted) break;
          let get = await this.fetch(channel, getCurrentUser().id, before, offset);
          if (get.messages.length <= 0 && get.skipped == 0) break;
          offset = get.offset;
          while (count !== 'all' && count < get.messages.length) get.messages.pop();
          for (const msg of get.messages) {
-            if (!this.pruning[this.channel]) break;
             await sleep(this.settings.get('normalDelay', 150));
             deleted += await this.deleteMsg(msg.id, channel);
          }
@@ -142,7 +134,7 @@ module.exports = class ClearMessages extends Plugin {
       let deleted = 0;
       let offset = 0;
       while (count == 'all' || count > deleted) {
-         if ((count !== 'all' && count === deleted) || !this.pruning[this.channel]) break;
+         if (count !== 'all' && count === deleted) break;
          let get = await this.fetch(channel, getCurrentUser().id, before, offset);
          if (get.messages.length <= 0 && get.skipped == 0) break;
          offset = get.offset;
@@ -151,14 +143,12 @@ module.exports = class ClearMessages extends Plugin {
          for (const msgs of chunk) {
             let funcs = [];
             for (const msg of msgs) {
-               if (!this.pruning[this.channel]) break;
                funcs.push(async () => {
                   return await this.deleteMsg(msg.id, channel);
                });
             }
             await Promise.all(
                funcs.map((f) => {
-                  if (!this.pruning[this.channel]) return;
                   return f().then((amount) => {
                      deleted += amount;
                   });
@@ -217,7 +207,7 @@ module.exports = class ClearMessages extends Plugin {
          });
       if (messages.body.message && messages.body.message.startsWith('Index')) {
          await sleep(messages.body.retry_after);
-         return await this.fetch(channel, user, before, offset);
+         return this.fetch(channel, user, before, offset);
       }
 
       let msgs = messages.body.messages;
