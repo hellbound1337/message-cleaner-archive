@@ -7,6 +7,7 @@ const Settings = require('./components/Settings');
 const { getChannelId } = getModule(['getLastSelectedChannelId'], false);
 const { getCurrentUser } = getModule(['getCurrentUser'], false);
 const { getToken } = getModule(['getToken'], false);
+const { deleteMessage } = getModule(['deleteMessage', 'fetchMessages'], false);
 
 module.exports = class ClearMessages extends Plugin {
    startPlugin() {
@@ -120,7 +121,7 @@ module.exports = class ClearMessages extends Plugin {
          if (count !== 'all' && count === deleted) break;
          let get = await this.fetch(channel, getCurrentUser().id, before, offset);
          if (get.messages.length <= 0 && get.skipped == 0) break;
-         offset += get.offset;
+         offset = get.offset;
          while (count !== 'all' && count < get.messages.length) get.messages.pop();
          for (const msg of get.messages) {
             await sleep(this.settings.get('normalDelay', 150));
@@ -163,27 +164,13 @@ module.exports = class ClearMessages extends Plugin {
 
    async deleteMsg(id, channel) {
       let deleted = 0;
-      await del(`https://discord.com/api/v6/channels/${channel}/messages/${id}`)
-         .set('User-Agent', navigator.userAgent)
-         .set('Authorization', getToken())
-         .then(() => {
-            deleted++;
-         })
-         .catch(async (err) => {
-            switch (err.statusCode) {
-               case 404:
-                  this.log(`Can't delete ${id} (Already deleted?)`);
-                  break;
-               case 429:
-                  this.log(`Ratelimited while deleting ${id}. Waiting ${err.body.retry_after}ms`);
-                  await sleep(err.body.retry_after);
-                  deleted += await this.deleteMsg(id, channel);
-                  break;
-               default:
-                  this.log(`Can't delete ${id} (Response: ${err.statusCode})`);
-                  break;
-            }
-         });
+      try {
+         await deleteMessage(channel, id);
+      } catch {
+         deleted += await this.deleteMsg(id, channel);
+         return deleted;
+      }
+      deleted++;
       return deleted;
    }
 
