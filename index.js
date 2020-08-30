@@ -184,6 +184,7 @@ module.exports = class ClearMessages extends Plugin {
                   break;
             }
          });
+      return deleted;
    }
 
    async fetch(channel, user, before, offset) {
