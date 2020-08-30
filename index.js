@@ -124,8 +124,8 @@ module.exports = class ClearMessages extends Plugin {
          offset = get.offset;
          while (count !== 'all' && count < get.messages.length) get.messages.pop();
          for (const msg of get.messages) {
-            await sleep(this.settings.get('normalDelay', 150));
             deleted += await this.deleteMsg(msg.id, channel);
+            await sleep(this.settings.get('normalDelay', 350));
          }
       }
       return deleted;
@@ -194,7 +194,7 @@ module.exports = class ClearMessages extends Plugin {
          });
       if (messages.body.message && messages.body.message.startsWith('Index')) {
          await sleep(messages.body.retry_after);
-         return this.fetch(channel, user, before, offset);
+         return await this.fetch(channel, user, before, offset);
       }
 
       let msgs = messages.body.messages;
