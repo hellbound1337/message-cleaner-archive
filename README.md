@@ -41,6 +41,8 @@ This plugin was made purely for educational purposes. You hold the responsibilit
 -  `prune all 739493961713975368`
 -  `prune 10`
 -  `prune 10 739493961713975368`
+-  `clear stop`
+-  `prune stop`
 
 # Support
 
