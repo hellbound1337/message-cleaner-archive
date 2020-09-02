@@ -43,7 +43,7 @@ module.exports = class Settings extends React.Component {
                maxValue={500}
                stickToMarkers
                markers={[100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200]}
-               defaultValue={350}
+               defaultValue={150}
                initialValue={this.props.getSetting('normalDelay', 150)}
                onValueChange={(val) => this.props.updateSetting('normalDelay', val)}
                note='Delay between deleting messages'
