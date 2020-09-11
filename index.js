@@ -8,7 +8,7 @@ const { getChannelId } = getModule(['getLastSelectedChannelId'], false);
 const { getCurrentUser } = getModule(['getCurrentUser'], false);
 const { getToken } = getModule(['getToken'], false);
 
-module.exports = class ClearMessages extends Plugin {
+module.exports = class MessageCleaner extends Plugin {
    startPlugin() {
       this.pruning = {};
 
@@ -36,7 +36,7 @@ module.exports = class ClearMessages extends Plugin {
          executor: (args) => this.clear(args)
       });
 
-      powercord.api.settings.registerSettings('clear-messages', {
+      powercord.api.settings.registerSettings('message-cleaner', {
          category: this.entityID,
          label: 'Message Cleaner',
          render: Settings
@@ -45,7 +45,7 @@ module.exports = class ClearMessages extends Plugin {
 
    pluginWillUnload() {
       powercord.api.commands.unregisterCommand('clear');
-      powercord.api.settings.unregisterSettings('clear-messages');
+      powercord.api.settings.unregisterSettings('message-cleaner');
    }
 
    async clear(args) {
@@ -55,9 +55,9 @@ module.exports = class ClearMessages extends Plugin {
       this.channel = getChannelId();
 
       const receivedMessage = createBotMessage(this.channel, {});
-      BOT_AVATARS.clear_messages = 'https://i.imgur.com/dOe7F3y.png';
+      BOT_AVATARS.message_cleaner = 'https://i.imgur.com/dOe7F3y.png';
       receivedMessage.author.username = 'Message Cleaner';
-      receivedMessage.author.avatar = 'clear_messages';
+      receivedMessage.author.avatar = 'message_cleaner';
 
       if (args.length === 0) {
          receivedMessage.content = 'Please specify an amount.';
