@@ -4,7 +4,7 @@ A powercord plugin to prune messages.
 
 # Warning
 
-Clear Messages is against the Discord and Powercord ToS and i don't condone using it.
+Message Cleaner is against the Discord and Powercord ToS and i don't condone using it.
 
 This plugin was made purely for educational purposes. You hold the responsibility of your account being terminated.
 
