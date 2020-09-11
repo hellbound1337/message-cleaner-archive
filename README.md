@@ -1,4 +1,4 @@
-# Clear Messages [![CodeFactor](https://www.codefactor.io/repository/github/hellbound1337/clear-messages/badge)](https://www.codefactor.io/repository/github/hellbound1337/clear-messages)
+# Message Cleaner [![CodeFactor](https://www.codefactor.io/repository/github/hellbound1337/message-cleaner/badge)](https://www.codefactor.io/repository/github/hellbound1337/message-cleaner)
 
 A powercord plugin to prune messages.
 
@@ -14,7 +14,7 @@ This plugin was made purely for educational purposes. You hold the responsibilit
 
 # Installation
 
--  `git clone https://github.com/hellbound1337/clear-messages.git`
+-  `git clone https://github.com/hellbound1337/message-cleaner.git`
 
 # Usage
 
@@ -27,7 +27,7 @@ This plugin was made purely for educational purposes. You hold the responsibilit
 
 ### To add your own aliases, you must find your powercord settings folder.
 
--  Go to [powercord folder location]\settings\clear-messages.json
+-  Go to [powercord folder location]\settings\message-cleaner.json
 -  To add an alias add another array item by changing `['1', '2', '3']` to `['1', '2', '3', '4']`
 -  The order of it doesn't matter.
 
