@@ -1,6 +1,6 @@
 {
-   "name": "Clear Messages",
-   "version": "3.1.7",
+   "name": "Message Cleaner",
+   "version": "4.0",
    "description": "Clears messages in the current channel.",
    "author": "hellbound",
    "license": "Unlicensed"
