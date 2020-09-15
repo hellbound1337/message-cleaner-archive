@@ -1,4 +1,4 @@
-# Message Cleaner [![CodeFactor](https://www.codefactor.io/repository/github/hellbound1337/message-cleaner/badge)](https://www.codefactor.io/repository/github/hellbound1337/message-cleaner)
+# Message Cleaner [![CodeFactor](https://www.codefactor.io/repository/github/hellboundthegod/message-cleaner/badge)](https://www.codefactor.io/repository/github/hellboundthegod/message-cleaner)
 
 A powercord plugin to prune messages.
 
@@ -14,7 +14,7 @@ This plugin was made purely for educational purposes. You hold the responsibilit
 
 # Installation
 
--  `git clone https://github.com/hellbound1337/message-cleaner.git`
+-  `git clone https://github.com/hellboundthegod/message-cleaner.git`
 
 # Usage
 
